@@ -171,9 +171,10 @@ git clone git://git.drogon.net/wiringPi
 cd wiringPi
 git fetch --tags
 git checkout 2.44
+cd /root/wiringPi/wiringPi/
 make static
 make install-static
-read -p "Enter to continue ... "
+
 echo "${GREEN}...done${WHITE}"
 
 
@@ -307,16 +308,29 @@ if [[ ! "$PATH" =~ "/root/go_path/bin" ]]; then
     XPATH+=:/root/go_path/bin
 fi
 
+rm /root/.bashrc
 echo export GOROOT_BOOTSTRAP=/root/gobootstrap >>/root/.bashrc
-echo export GOPATH=/usr/lib/go/ >>/root/.bashrc
-echo export GOROOT=/usr/lib/go-1.7/ >>/root/.bashrc
-echo export PATH=${XPATH} >>/root/.bashrc
+echo export GOPATH=/usr/local/go >>/root/.bashrc
+echo export GOPATH=$HOME/go >> /root/.bashrc
+echo export PATH=/usr/local/go/bin:$PATH:$GOPATH/bin >> /root/.bashrc
+echo export GOROOT=/usr/local/go/ >>/root/.bashrc
+echo export CGO_CFLAGS_ALLOW=-L$HOME/stratux >> /root/.bashrc
+echo export CGO_CFLAGS=-L$HOME/stratux >> /root/.bashrc
+
+
+#echo export PATH=${XPATH} >>/root/.bashrc
 
 export GOROOT_BOOTSTRAP=/root/gobootstrap
-export GOPATH=/usr/lib/go/
-export GOROOT=/usr/lib/go-1.7/
-export PATH=${PATH}:/usr/bin/
+export GOPATH=$HOME/go
+export PATH=/usr/local/go/bin:$PATH:$GOPATH/bin
+export GOROOT=/usr/local/go/
+export CGO_CFLAGS_ALLOW=-L$HOME/stratux
+export CGO_CFLAGS=-L$HOM#/stratux
+#export PATH=${PATH}:/usr/bin/
 source /root/.bashrc
+
+cat /root/.bashrc
+
 
 echo "${GREEN}...done${WHITE}"
 
@@ -334,10 +348,14 @@ cd /root
 
 if [ "$MACHINE" == "$ARM6L" ] || [ "$MACHINE" == "$ARM7L" ]; then
 	 echo "${BOLD}${WHITE}  golang install...${WHITE}${NORMAL}"
-	     apt-get install golang-go
+    #	     apt-get install golang-go
     #### For RPi-2/3, is there any disadvantage to using the armv6l compiler?
     #wget https://storage.googleapis.com/golang/go1.7.2.linux-armv6l.tar.gz --no-check-certificate
     #tar -zxvf go1.7.2.linux-armv6l.tar.gz
+	wget https://storage.googleapis.com/golang/go1.10.1.linux-armv6l.tar.gz
+	sudo tar -C /usr/local -xvf go1.10.1.linux-armv6l.tar.gz
+
+
 
     #if [ ! -d /root/go ]; then
     #    echo "${BOLD}${RED}ERROR - go folder doesn't exist, exiting...${WHITE}${NORMAL}"
